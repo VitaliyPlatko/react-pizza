@@ -18,7 +18,7 @@ function Categories () {
                 {   /* Це value в map це значення з масиву categories, тобто в value зберігається весь масив*/
                     /* Якщо ми рендеримо список то в кожного елементу є індекс, ми можемо його отрмати */
                     categories.map((value, i)=>(
-                        <li onClick={()=>onClickCategory(i)} className={activeIndex === i ? "active" : ''}>
+                        <li key={i} onClick={()=>onClickCategory(i)} className={activeIndex === i ? "active" : ''}>
                             {/* Тут я рендерю значення з масив categories */}
                             {value}
                         </li>

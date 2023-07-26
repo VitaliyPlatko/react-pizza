@@ -18,6 +18,7 @@ function PizzaBlock({title, price, imageUrl, sizes, types}){
                 <ul>
                     {types.map((typeId)=>(
                         <li 
+                            key={typeId}
                             /* Змінює типи піц */
                             onClick={()=>setActiveType(typeId)}
                             className={activeType === typeId ? 'active':''}>
@@ -28,6 +29,7 @@ function PizzaBlock({title, price, imageUrl, sizes, types}){
                 <ul>
                     {sizes.map((size, i)=>(
                         <li 
+                            key={size}
                             /* змінює розміри піц */
                             onClick={()=>setActiveSize(i)}
                             className={activeSize === i ? 'active':''}>{size} см.</li>
