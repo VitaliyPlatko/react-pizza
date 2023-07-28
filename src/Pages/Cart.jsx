@@ -75,7 +75,7 @@ function Cart() {
                 stroke-linejoin="round"
               />
             </svg>
-            <span>Очистить корзину</span>
+            <span>Очистити корзину</span>
           </div>
         </div>
         <div className="content__items">
@@ -384,11 +384,11 @@ function Cart() {
           <div className="cart__bottom-details">
             <span>
               {" "}
-              Всего пицц: <b>3 шт.</b>{" "}
+              Всього піц: <b>3 шт.</b>{" "}
             </span>
             <span>
               {" "}
-              Сумма заказа: <b>900 ₽</b>{" "}
+              Сума замовлення: <b>900 $</b>{" "}
             </span>
           </div>
           <div className="cart__bottom-buttons">
@@ -408,10 +408,10 @@ function Cart() {
                   stroke-linejoin="round"
                 />
               </svg>
-                <span>Вернуться назад</span>
+                <span>Повернутись назад</span>
             </Link>
             <div className="button pay-btn">
-              <span>Оплатить сейчас</span>
+              <span>Оплатити зараз</span>
             </div>
           </div>
         </div>

@@ -1,16 +1,20 @@
 import React from 'react'
 
-function Sort(){
+function Sort({value, onChangeSort}){
     /* Для відораження PopUp */
     const [open, setOpen]=React.useState(false)
-    /* Для вибору категорії */
-    const [selected, setSelected] = React.useState(0)
-    const list = ['популярності','ціні','алфавіту']
-    const sortName = list[selected]
+    const List = [
+        {name: 'популярні', sortProperty: 'rating'},
+        {name: 'не популярні', sortProperty: '-rating'},
+        {name: 'найдорожчі', sortProperty: 'price'},
+        {name: 'найдешевші', sortProperty: '-price'},
+        {name: 'від А до Я', sortProperty: 'title'},
+        {name: 'від Я до А', sortProperty: '-title'}
+    ]
 
     /* Функція вибирає тип сортування і після цього закриває його */
     const onClickListItem=(i)=>{
-        setSelected(i)
+        onChangeSort(i)
         setOpen(false)
     }
 
@@ -29,15 +33,19 @@ function Sort(){
                 fill="#2C2C2C"
             />
             </svg>
-            <b onClick={()=>setOpen(!open)}>Сортировка по:</b>
-            <span onClick={()=>setOpen(!open)}>{sortName}</span>
+            <b onClick={()=>setOpen(!open)}>Сортування по:</b>
+            <span onClick={()=>setOpen(!open)}>{value.name}</span>
             </div>
             {open && 
                 <div className="sort__popup">
                     <ul>
-                        {list.map((name, i)=>(
-                            <li key={i} onClick={()=>onClickListItem(i)} className={selected === i ? 'active':''}>
-                                {name}
+                        {/* З цього масиву обєктів List який я зробив я витягую obj.name */}
+                        {List.map((obj, i)=>(
+                            <li 
+                                key={i} 
+                                onClick={()=>onClickListItem(obj)} 
+                                className={value.sortProperty === obj.sortProperty ? 'active':''}>
+                                {obj.name}
                             </li>
                         ))}
                     </ul>
