@@ -10,13 +10,16 @@ import NotFound from "./Pages/NotFound";
 import {Route, Routes} from "react-router";
 
 function App() {
+  /* Стейт для інпуту */
+  const[serchValue, setSearchValue] = React.useState('')
+  console.log(serchValue);
 
   return (
     <div className="wrapper">
-      <Header />
+      <Header serchValue={serchValue} setSearchValue={setSearchValue}/>
       <div className="content">
             <Routes>
-              <Route path="/" element={<Home/>}/> 
+              <Route path="/" element={<Home serchValue={serchValue}/>}/> 
               <Route path="/cart" element={<Cart/>}/> 
               <Route path="*" element={<NotFound/>}/> 
             </Routes>

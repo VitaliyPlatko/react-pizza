@@ -1,12 +1,14 @@
 import React from 'react'
+import ReactPaginate from 'react-paginate';
 
 import Categories from '../components/Categories';
 import PizzaBlock from "../components/PizzaBlock";
 import Sort from "../components/Sort";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 
+import { Pagination } from '../components/Pagination';
 
-function Home () {
+function Home ({serchValue}) {
 
     /* Збереження даних з бекенду */
     const [items, setItems] = React.useState([])
@@ -24,10 +26,12 @@ function Home () {
     /* Якщо - є то робить сортування по зростанню інакше по спаданню */
     const order = sortType.sortProperty.includes('-')?'asc':'desc'
     const category = categoryId>0?`category=${categoryId}`:''
+    const search = serchValue ? `search=${serchValue}`:''
+    const [currentPage, setCurrentPage] = React.useState(1)
 
     React.useEffect(()=>{
         setIsLoading(true)
-        fetch(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?${category}&sortBy=${sortBy}&order=${order}`)
+        fetch(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}`)
         /* перетворюю відповідь в json формат */
         .then((res) => res.json()  )
         .then((arr)=>{
@@ -35,7 +39,11 @@ function Home () {
             setIsLoading(false)
         })
         window.scrollTo(0,0)
-    },[categoryId, sortType])
+    },[categoryId, sortType, serchValue, currentPage])
+
+    const pizzas = items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))
+
+    const skeletons = [...new Array(8)].map((_, index)=><Skeleton key={index}/>)
 
     return (
         <div className="container">
@@ -44,13 +52,8 @@ function Home () {
                 <Sort value={sortType} onChangeSort={(i)=>setSortType(i)}/>
             </div>
             <h2 className="content__title">Всі піцци</h2>
-            <div className="content__items">
-                {isLoading
-                /*Якщо йде загрузка то створи 6 undefined і заміни їх на Skeleton  */
-                    ?[...new Array(8)].map((_, index)=><Skeleton key={index}/>)
-                /* Якщо загрузка не йде тоді рендери PizzaBlock */
-                    :items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))}
-            </div>
+            <div className="content__items">{isLoading?skeletons:pizzas}</div>
+            <Pagination onChangePage={(number)=>setCurrentPage(number)} />
         </div>
     )
 }
