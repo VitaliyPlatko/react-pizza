@@ -1,5 +1,4 @@
-import React from 'react'
-import ReactPaginate from 'react-paginate';
+import React, { useContext } from 'react'
 
 import Categories from '../components/Categories';
 import PizzaBlock from "../components/PizzaBlock";
@@ -7,8 +6,11 @@ import Sort from "../components/Sort";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 
 import { Pagination } from '../components/Pagination';
+import { SearchContext } from '../App';
 
-function Home ({serchValue}) {
+function Home () {
+
+    const {serchValue} = useContext(SearchContext)
 
     /* Збереження даних з бекенду */
     const [items, setItems] = React.useState([])
@@ -21,7 +23,7 @@ function Home ({serchValue}) {
         sortProperty: 'rating'
     })
 
-    /* еревіряє чи є - */
+    /* перевіряє чи є - */
     const sortBy = sortType.sortProperty.replace('-','')
     /* Якщо - є то робить сортування по зростанню інакше по спаданню */
     const order = sortType.sortProperty.includes('-')?'asc':'desc'
@@ -42,7 +44,6 @@ function Home ({serchValue}) {
     },[categoryId, sortType, serchValue, currentPage])
 
     const pizzas = items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))
-
     const skeletons = [...new Array(8)].map((_, index)=><Skeleton key={index}/>)
 
     return (
