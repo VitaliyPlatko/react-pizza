@@ -8,28 +8,40 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import { Pagination } from '../components/Pagination';
 import { SearchContext } from '../App';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { setCategotyId } from '../redux/slices/filterSlice';
+
 function Home () {
+    /* Це функція яка буде міняти наш стейт */
+    const dispatch = useDispatch()
+
+    /* За допомогою хука useSelector ми можемо витягнути все наше сховище */
+    /* Цю фукнцію я використовую для того, щоб витягнути значення з filterSlice  */
+    /* Зі сховища верни нам filter, і дай categiryId яке є в filterSlice*/
+    /* categoryId - це стейт який я описав в filterSlice */
+    const categoryId = useSelector(state => state.filter.categoryID)
+    const sortType = useSelector(state => state.filter.sort.sortProperty)
+    
+
+    /* Функція буде вибирати id котегорії і передає її в Redux через useDispatch */
+    const onChangeCategory = (id) =>{
+        dispatch(setCategotyId(id))
+    }
 
     const {serchValue} = useContext(SearchContext)
-
     /* Збереження даних з бекенду */
     const [items, setItems] = React.useState([])
     /* Для рендерингу загрузки */
     const [isLoading, setIsLoading] = React.useState(true)
+    const [currentPage, setCurrentPage] = React.useState(1)
 
-    const [categoryId, setCategoryID] = React.useState(0)
-    const [sortType, setSortType] = React.useState({
-        name: 'популярності',
-        sortProperty: 'rating'
-    })
 
     /* перевіряє чи є - */
-    const sortBy = sortType.sortProperty.replace('-','')
+    const sortBy = sortType.replace('-','')
     /* Якщо - є то робить сортування по зростанню інакше по спаданню */
-    const order = sortType.sortProperty.includes('-')?'asc':'desc'
+    const order = sortType.includes('-')?'asc':'desc'
     const category = categoryId>0?`category=${categoryId}`:''
     const search = serchValue ? `search=${serchValue}`:''
-    const [currentPage, setCurrentPage] = React.useState(1)
 
     React.useEffect(()=>{
         setIsLoading(true)
@@ -49,8 +61,9 @@ function Home () {
     return (
         <div className="container">
             <div className="content__top">
-                <Categories value={categoryId} onChangeCategory={(i)=>setCategoryID(i)}/>
-                <Sort value={sortType} onChangeSort={(i)=>setSortType(i)}/>
+                {/* 4 */}
+                <Categories value={categoryId} onChangeCategory={onChangeCategory}/>
+                <Sort />
             </div>
             <h2 className="content__title">Всі піцци</h2>
             <div className="content__items">{isLoading?skeletons:pizzas}</div>
