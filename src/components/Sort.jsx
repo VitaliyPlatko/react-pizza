@@ -1,5 +1,5 @@
 import React from 'react'
-//!1
+
 import { useDispatch, useSelector } from 'react-redux'
 import { setSort } from '../redux/slices/filterSlice'
 
@@ -13,7 +13,6 @@ const List = [
 ]
 
 function Sort(){
-
     /* Перелає дії в Redux */
     const dispatch = useDispatch()
     /* Зміння буде зберігати з Redux обєкт sort*/

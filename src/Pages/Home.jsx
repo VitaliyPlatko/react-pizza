@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import axios from 'axios';
 
 import Categories from '../components/Categories';
 import PizzaBlock from "../components/PizzaBlock";
@@ -11,6 +12,7 @@ import { SearchContext } from '../App';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategotyId } from '../redux/slices/filterSlice';
 
+
 function Home () {
     /* Це функція яка буде міняти наш стейт */
     const dispatch = useDispatch()
@@ -21,7 +23,6 @@ function Home () {
     /* categoryId - це стейт який я описав в filterSlice */
     const categoryId = useSelector(state => state.filter.categoryID)
     const sortType = useSelector(state => state.filter.sort.sortProperty)
-    
 
     /* Функція буде вибирати id котегорії і передає її в Redux через useDispatch */
     const onChangeCategory = (id) =>{
@@ -35,7 +36,6 @@ function Home () {
     const [isLoading, setIsLoading] = React.useState(true)
     const [currentPage, setCurrentPage] = React.useState(1)
 
-
     /* перевіряє чи є - */
     const sortBy = sortType.replace('-','')
     /* Якщо - є то робить сортування по зростанню інакше по спаданню */
@@ -45,13 +45,15 @@ function Home () {
 
     React.useEffect(()=>{
         setIsLoading(true)
-        fetch(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}`)
-        /* перетворюю відповідь в json формат */
-        .then((res) => res.json()  )
-        .then((arr)=>{
-            setItems(arr)
-            setIsLoading(false)
-        })
+        try {
+            axios.get(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}`)
+            .then((res)=>{
+                setItems(res.data)
+                setIsLoading(false)
+            })
+        } catch (error) {
+            console.log('Помилка при відравленні даних на сервер');
+        }
         window.scrollTo(0,0)
     },[categoryId, sortType, serchValue, currentPage])
 
@@ -61,7 +63,6 @@ function Home () {
     return (
         <div className="container">
             <div className="content__top">
-                {/* 4 */}
                 <Categories value={categoryId} onChangeCategory={onChangeCategory}/>
                 <Sort />
             </div>
