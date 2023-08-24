@@ -23,10 +23,15 @@ const filterSlice = createSlice({
     setSort(state, action) {
       /* В стейт ми зберігаємо те, що прийде в action.payload (А туда прийде id категорії) */
       state.sort = action.payload
+    },
+    setFilters(state, action){
+      state.sort = action.payload.sort
+      state.currentPage = Number(action.payload.currentPage)
+      state.categoryID = Number(action.payload.categoryID)
     }
   }
 })
 
 /* Всі методи які будуть в reducers вонпи будуть в actions */
-export const { setCategotyId, setSort } = filterSlice.actions
+export const { setCategotyId, setSort, setFilters } = filterSlice.actions
 export default filterSlice.reducer;
