@@ -40,8 +40,7 @@ function Home () {
     const sortBy = sortType.replace('-','')
     /* Якщо - є то робить сортування по зростанню інакше по спаданню */
     const order = sortType.includes('-')?'asc':'desc'
-    const category = categoryId>0?`category=${categoryId}`:''
-    const search = serchValue ? `search=${serchValue}`:''
+    const category = categoryId>0?`&category=${categoryId}`:''
 
     React.useEffect(()=>{
         setIsLoading(true)
