@@ -12,72 +12,87 @@ import { SearchContext } from '../App';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategotyId } from '../redux/slices/filterSlice';
-
 import { useNavigate } from 'react-router-dom';
+import { List } from 'react-content-loader';
 
 function Home () {
     /* Це функція яка буде міняти наш стейт */
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    /* За допомогою хука useSelector ми можемо витягнути все наше сховище */
-    /* Цю фукнцію я використовую для того, щоб витягнути значення з filterSlice  */
-    /* Зі сховища верни нам filter, і дай categiryId яке є в filterSlice*/
-    /* categoryID - це стейт який я описав в filterSlice */
-    const {categoryID, sort} = useSelector(state => state.filter)
+    const isSearch = React.useRef(false)
+    const {categoryID, sort, setFilters} = useSelector(state => state.filter)
 
     /* Функція буде вибирати id котегорії і передає її в Redux через useDispatch */
     const onChangeCategory = (id) =>{
         dispatch(setCategotyId(id))
     }
-
-    const {serchValue} = useContext(SearchContext)
-    /* Збереження даних з бекенду */
-    const [items, setItems] = React.useState([])
-    /* Для рендерингу загрузки */
-    const [isLoading, setIsLoading] = React.useState(true)
-    const [currentPage, setCurrentPage] = React.useState(1)
-
-    /* перевіряє чи є - */
-    const sortBy = sort.sortProperty.replace('-','')
-    /* Якщо - є то робить сортування по зростанню інакше по спаданню */
-    const order = sort.sortProperty.includes('-')?'asc':'desc'
-    const category = categoryID>0?`&category=${categoryID}`:''
-
-    React.useEffect(()=>{
+    
+    const fetchPizzas=()=>{
         setIsLoading(true)
+
+
+        const sortBy = sort.sortProperty.replace('-','')
+        const order = sort.sortProperty.includes('-')?'asc':'desc'
+        const category = categoryID>0?`category=${categoryID}`:''
+        const search = serchValue ? `search=${serchValue}`:''
+
+
         try {
-            axios.get(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}`)
+           axios.get(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}`)
             .then((res)=>{
                 setItems(res.data)
                 setIsLoading(false)
             })
         } catch (error) {
-            console.log('Помилка при відравленні даних на сервер');
+            console.log('Помилка при відправленні даних на сервер');
         }
         window.scrollTo(0,0)
-    },[categoryID, sort.sortProperty, serchValue, currentPage])
+    }
 
+
+    const {serchValue} = useContext(SearchContext)
+    const [items, setItems] = React.useState([])
+    const [isLoading, setIsLoading] = React.useState(true)
+    const [currentPage, setCurrentPage] = React.useState(1)
+
+    //! Для парсингу параметрів
     React.useEffect(()=>{
         if(window.Location.search){
-            const params =qs.parse(window.Location.search.substring(1))
+            const params = qs.parse(window.Location.search.substring(1))
+            const sort = List.find(obj=>obj.sortProperty===params.sortProperty)
+            dispatch(
+                setFilters({
+                    /* Передаю параметри в Redux */
+                    ...params,
+                    sort
+                })
+            )
+            isSearch.current = true
         }
+        
     },[])
+
     
-
-    const pizzas = items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))
-    const skeletons = [...new Array(8)].map((_, index)=><Skeleton key={index}/>)
-
     React.useEffect(()=>{
-        /* Якщо нам прийшли параметри томи їх поинні переторити в 1 цілу стрічку (1 ссилку)*/
+        if(!isSearch.current){
+            fetchPizzas()
+        }  //Якщо тут нічого немає то робимо false
+        isSearch.current = false
+    },[categoryID, sort.sortProperty, serchValue, currentPage])
+
+    //! вшивання параметрів  їх в адресну стрічку
+    React.useEffect(()=>{
         const queryString = qs.stringify({
-            /* Ці дані які є нижче ми будемо вшивати в адресну стрічку */
             sortProperty: sort.sortProperty,
             categoryID,
             currentPage,
         })
-        /* Вшиває в ссилку параметри сортування, фільтрації і номер сторінки */
         navigate(`?${queryString}`)
     },[categoryID, sort.sortProperty, currentPage])
+
+
+    const pizzas = items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))
+    const skeletons = [...new Array(8)].map((_, index)=><Skeleton key={index}/>)
 
     return (
         <div className="container">
