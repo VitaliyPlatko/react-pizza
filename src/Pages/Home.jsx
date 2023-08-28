@@ -26,19 +26,23 @@ function Home () {
     const onChangeCategory = (id) =>{
         dispatch(setCategotyId(id))
     }
-    
+
+    const {serchValue} = useContext(SearchContext)
+    const [items, setItems] = React.useState([])
+    const [isLoading, setIsLoading] = React.useState(true)
+    const [currentPage, setCurrentPage] = React.useState(1)
+
+    /* Функція ідпоідає за ввзаємодію з бекендом */
     const fetchPizzas=()=>{
         setIsLoading(true)
 
-
         const sortBy = sort.sortProperty.replace('-','')
         const order = sort.sortProperty.includes('-')?'asc':'desc'
-        const category = categoryID>0?`category=${categoryID}`:''
-        const search = serchValue ? `search=${serchValue}`:''
-
+        const category = categoryID>0?`&category=${categoryID}`:''
+        const search = serchValue ? `&search=${serchValue}`:''
 
         try {
-           axios.get(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}`)
+            axios.get(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}&limit=4`)
             .then((res)=>{
                 setItems(res.data)
                 setIsLoading(false)
@@ -49,16 +53,12 @@ function Home () {
         window.scrollTo(0,0)
     }
 
-
-    const {serchValue} = useContext(SearchContext)
-    const [items, setItems] = React.useState([])
-    const [isLoading, setIsLoading] = React.useState(true)
-    const [currentPage, setCurrentPage] = React.useState(1)
-
-    //! Для парсингу параметрів
     React.useEffect(()=>{
+        /* Якщо він є то тоді ми будемо це парсити */
         if(window.Location.search){
+            /* substrin забирає ? з ссилки (арсить і перетворює в обєкт) */
             const params = qs.parse(window.Location.search.substring(1))
+            /* Пробігаємось по кожній ластиості sortProperty і в обєкті sortProperty знайти то що є в params.sortProperty */
             const sort = List.find(obj=>obj.sortProperty===params.sortProperty)
             dispatch(
                 setFilters({
@@ -72,7 +72,6 @@ function Home () {
         
     },[])
 
-    
     React.useEffect(()=>{
         if(!isSearch.current){
             fetchPizzas()
@@ -80,7 +79,7 @@ function Home () {
         isSearch.current = false
     },[categoryID, sort.sortProperty, serchValue, currentPage])
 
-    //! вшивання параметрів  їх в адресну стрічку
+    // вшивання параметрів в адресну стрічку
     React.useEffect(()=>{
         const queryString = qs.stringify({
             sortProperty: sort.sortProperty,
@@ -89,7 +88,6 @@ function Home () {
         })
         navigate(`?${queryString}`)
     },[categoryID, sort.sortProperty, currentPage])
-
 
     const pizzas = items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))
     const skeletons = [...new Array(8)].map((_, index)=><Skeleton key={index}/>)

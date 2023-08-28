@@ -17,6 +17,8 @@ function Sort(){
     const dispatch = useDispatch()
     /* Зміння буде зберігати з Redux обєкт sort*/
     const sort = useSelector(state => state.filter.sort)
+    /* Отримую ссилку на sort */
+    const sortRef = React.useRef()
     /* Для відораження PopUp */
     const [open, setOpen]=React.useState(false)
     /* Функція вибирає тип сортування і після цього закриває його */
@@ -24,9 +26,21 @@ function Sort(){
         dispatch(setSort(obj))
         setOpen(false)
     }
+    
+    React.useEffect(() => {
+        /* Функція буде викликатись при кліку на body */
+        const handleClickOutside = (event) => {
+            /* Тепер нам потрібно перееіряти на що ми натиснули */
+            if (!event.composedPath().includes(sortRef.current)) setOpen(false)
+        }
+        /* При клаку будее викликатись вункція handleClickOutside */
+        document.body.addEventListener('click', handleClickOutside)
+        /* Якщо компонент має зникнути з сторінки то ми повинні видалити обробник подій */
+        return () => document.body.removeEventListener('click', handleClickOutside)
+    }, [])
 
     return(
-        <div className="sort">
+        <div ref={sortRef} className="sort">
             <div className="sort__label">
             <svg
                 width="10"
