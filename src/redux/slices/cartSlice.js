@@ -10,20 +10,10 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    // (Додавання в корзину) 
-      /* addItem(state, action) {
-      // Додаємо продукт 
-      state.items.push(action.payload)
-      // Знаходимо суму 
-      state.totalPrice = state.items.reduce((sum, obj)=>{
-        return obj.price + sum;
-      },0)
-    },  */
-
     addItem(state, action) {
       // Ми знаходимо цей обєкт у якого obj.id === action.payload.id 
       const findItem = state.items.find(obj => obj.id === action.payload.id)
-      // Тоді ми цьому оєкту роимо count++ 
+      // Тоді ми цьому обєкту роимо count++ 
       if(findItem){
         findItem.count++
       }else{
@@ -38,7 +28,10 @@ const cartSlice = createSlice({
         return obj.price * obj.count + sum;
       },0)
     }, 
-
+    minusItem(state, action){
+      const findItem = state.items.find(obj => obj.id === action.payload)
+      if(findItem)findItem.count--
+    },
     /* (Видалення) Знаходжу обєкт в якгого id не співпадає з action.payload */
     removeItem(state, action) {
       state.items = state.items.filter(obj => obj.id !== action.payload)
@@ -46,10 +39,11 @@ const cartSlice = createSlice({
     /* Для очищення корзини */
     clearItems(state) {
       state.items = []
+      state.totalPrice=0
     },
   }
 })
 
 /* Всі методи які будуть в reducers вонпи будуть в actions */
-export const { addItem, removeItem, clearItems } = cartSlice.actions
+export const { addItem, removeItem, clearItems, minusItem } = cartSlice.actions
 export default cartSlice.reducer;
