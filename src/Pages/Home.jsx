@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import axios from 'axios';
+
 import qs from 'qs'
 
 import Categories from '../components/Categories';
@@ -12,8 +12,10 @@ import { SearchContext } from '../App';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setCategotyId } from '../redux/slices/filterSlice';
+import { fetchPizzas } from '../redux/slices/pizzaSlice'
 import { useNavigate } from 'react-router-dom';
 import { List } from 'react-content-loader';
+
 
 function Home () {
     /* Це функція яка буде міняти наш стейт */
@@ -21,37 +23,28 @@ function Home () {
     const navigate = useNavigate()
     const isSearch = React.useRef(false)
     const {categoryID, sort, setFilters} = useSelector(state => state.filter)
+    const {items, status} = useSelector((state)=>state.pizza)
 
     /* Функція буде вибирати id котегорії і передає її в Redux через useDispatch */
-    const onChangeCategory = (id) =>{
-        dispatch(setCategotyId(id))
-    }
+    const onChangeCategory = (id) => dispatch(setCategotyId(id))
 
     const {serchValue} = useContext(SearchContext)
-    const [items, setItems] = React.useState([])
-    const [isLoading, setIsLoading] = React.useState(true)
+    
     const [currentPage, setCurrentPage] = React.useState(1)
 
     /* Функція ідпоідає за ввзаємодію з бекендом */
-    const fetchPizzas=()=>{
-        setIsLoading(true)
+    const getPizzas=async()=>{
 
         const sortBy = sort.sortProperty.replace('-','')
         const order = sort.sortProperty.includes('-')?'asc':'desc'
         const category = categoryID>0?`&category=${categoryID}`:''
         const search = serchValue ? `&search=${serchValue}`:''
 
-        try {
-            axios.get(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}${category}&sortBy=${sortBy}&order=${order}&search=${serchValue}&limit=4`)
-            .then((res)=>{
-                setItems(res.data)
-                setIsLoading(false)
-            })
-        } catch (error) {
-            console.log('Помилка при відправленні даних на сервер');
-        }
+        dispatch(fetchPizzas({sortBy, order, category, search, currentPage}))
+
         window.scrollTo(0,0)
     }
+
 
     React.useEffect(()=>{
         /* Якщо він є то тоді ми будемо це парсити */
@@ -69,15 +62,13 @@ function Home () {
             )
             isSearch.current = true
         }
-        
     },[])
 
+
     React.useEffect(()=>{
-        if(!isSearch.current){
-            fetchPizzas()
-        }  //Якщо тут нічого немає то робимо false
-        isSearch.current = false
+        getPizzas()
     },[categoryID, sort.sortProperty, serchValue, currentPage])
+
 
     // вшивання параметрів в адресну стрічку
     React.useEffect(()=>{
@@ -89,8 +80,10 @@ function Home () {
         navigate(`?${queryString}`)
     },[categoryID, sort.sortProperty, currentPage])
 
+
     const pizzas = items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))
     const skeletons = [...new Array(8)].map((_, index)=><Skeleton key={index}/>)
+
 
     return (
         <div className="container">
@@ -99,10 +92,11 @@ function Home () {
                 <Sort />
             </div>
             <h2 className="content__title">Всі піцци</h2>
-            <div className="content__items">{isLoading?skeletons:pizzas}</div>
+            <div className="content__items">{status === 'Loading'?skeletons:pizzas}</div>
             <Pagination onChangePage={(number)=>setCurrentPage(number)} />
         </div>
     )
 }
+
 
 export default Home
