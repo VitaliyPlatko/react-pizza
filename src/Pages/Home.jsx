@@ -92,7 +92,15 @@ function Home () {
                 <Sort />
             </div>
             <h2 className="content__title">Всі піцци</h2>
-            <div className="content__items">{status === 'Loading'?skeletons:pizzas}</div>
+            {
+                status === 'error'?(
+                    <div className='content__error-info'>
+                        <h2>Сталась помилка <icon>😕</icon></h2>
+                        <p>Не вдалось отримати піцци. Попробуйте повторити спробу пізніше</p>
+                    </div>
+                ):(<div className="content__items">{status == 'loading'?skeletons:pizzas}</div>)
+            }
+            
             <Pagination onChangePage={(number)=>setCurrentPage(number)} />
         </div>
     )
