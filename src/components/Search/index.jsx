@@ -1,21 +1,19 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styles from './Search.module.scss'
-import { SearchContext } from '../../App'
 import debounce from 'lodash.debounce'
+import { useDispatch } from 'react-redux';
+import { setSearchValue } from '../../redux/slices/filterSlice';
 
 
 const Search = () => {
-    
+    const dispatch = useDispatch()
     /* В цей стейт я отримую інформацію з value яке є в input. Він очищує тільки текст в інпуті*/
     const [value, setValue] = React.useState('')
-    
-    /* А цей стейт є в App.js і він відповідає за фільтрацію */
-    const {setSearchValue}=useContext(SearchContext)
     const inputRef = React.useRef()
     
     // Очищує інпут і робить фокус
     const onClickClear=()=>{
-        setSearchValue('')
+        dispatch(setSearchValue(''))
         setValue('')
         inputRef.current.focus()
     }
@@ -24,13 +22,14 @@ const Search = () => {
     const updateSearchValue=React.useCallback(
             debounce((str)=>{
                 /* оновлює str  */
-                setSearchValue(str)
+                dispatch(setSearchValue(str))
             },250),
         [],
     )
 
     /* Функція відповідає за оновлення локального і глобального стейту*/
     const onChangeInput=(event)=>{
+        dispatch(setSearchValue(''))
         setValue(event.target.value)
         updateSearchValue(event.target.value)
     }

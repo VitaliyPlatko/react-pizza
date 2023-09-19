@@ -2,10 +2,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from 'axios';
 
-export const fetchPizzas = createAsyncThunk('pizza/fetchPizzasStatus', async (params) => {
+export const fetchPizzas = createAsyncThunk('pizza/fetchPizzasStatus', async (params, thunkAPI) => {
     const { sortBy, order, category, search, currentPage } = params
     const { data } = await axios.get(`https://64bfe44b0d8e251fd111a443.mockapi.io/items?page=${currentPage}${category}&sortBy=${sortBy}&order=${order}&search=${search}&limit=4`)
-    return data
+    return (data)
   }
 )
 
@@ -20,7 +20,7 @@ const pizzaSlice = createSlice({
   reducers: {
     setItems(state, action) {
       state.items = action.payload;
-    },
+    }
   },
   extraReducers: {
     [fetchPizzas.pending]: (state) => {
@@ -28,18 +28,16 @@ const pizzaSlice = createSlice({
       state.items = [];
     },
     [fetchPizzas.fulfilled]: (state, action) => {
-      console.log(action, 'fulfilled');
       state.items = action.payload;
       state.status = 'success';
     },
     [fetchPizzas.rejected]: (state, action) => {
-      console.log(action, 'rejected');
       state.status = 'error';
       state.items = [];
     },
   },
 });
 
-export const selectPizzaData = (state) => state.pizza;
+export const selectPizzaData = (state) => state.pizza
 export const { setItems } = pizzaSlice.actions
 export default pizzaSlice.reducer;

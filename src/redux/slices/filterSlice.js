@@ -2,6 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
+  serchValue: '',
   /* Тип категорії (ID) 0 тому, що всі вибарні по замовчуванню*/
   categoryID: 0,
   /* Тип сортування */
@@ -19,6 +20,10 @@ const filterSlice = createSlice({
     setCategotyId(state, action) {
       state.categoryID = action.payload
     },
+    /*  */
+    setSearchValue(state, action) {
+      state.serchValue = action.payload
+    },
     /* Метод відповідає за сортування */
     setSort(state, action) {
       /* В стейт ми зберігаємо те, що прийде в action.payload (А туда прийде id категорії) */
@@ -32,6 +37,9 @@ const filterSlice = createSlice({
   }
 })
 
+export const selectSort = (state) => state.filter.sort
+export const selectFilter = (state) => state.filter
+
 /* Всі методи які будуть в reducers вонпи будуть в actions */
-export const { setCategotyId, setSort, setFilters } = filterSlice.actions
+export const { setCategotyId, setSort, setFilters, setSearchValue } = filterSlice.actions
 export default filterSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 
 import qs from 'qs'
 
@@ -8,12 +8,12 @@ import Sort from "../components/Sort";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 
 import { Pagination } from '../components/Pagination';
-import { SearchContext } from '../App';
+
 
 import { useDispatch, useSelector } from 'react-redux';
-import { setCategotyId } from '../redux/slices/filterSlice';
-import { fetchPizzas } from '../redux/slices/pizzaSlice'
-import { useNavigate } from 'react-router-dom';
+import { selectFilter, setCategotyId } from '../redux/slices/filterSlice';
+import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice'
+import { Link, useNavigate } from 'react-router-dom';
 import { List } from 'react-content-loader';
 
 
@@ -22,29 +22,23 @@ function Home () {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const isSearch = React.useRef(false)
-    const {categoryID, sort, setFilters} = useSelector(state => state.filter)
-    const {items, status} = useSelector((state)=>state.pizza)
+    const {categoryID, sort, setFilters, serchValue} = useSelector(selectFilter)
+    const {items, status} = useSelector(selectPizzaData)
 
     /* Функція буде вибирати id котегорії і передає її в Redux через useDispatch */
     const onChangeCategory = (id) => dispatch(setCategotyId(id))
-
-    const {serchValue} = useContext(SearchContext)
-    
     const [currentPage, setCurrentPage] = React.useState(1)
 
     /* Функція ідпоідає за ввзаємодію з бекендом */
     const getPizzas=async()=>{
-
         const sortBy = sort.sortProperty.replace('-','')
         const order = sort.sortProperty.includes('-')?'asc':'desc'
         const category = categoryID>0?`&category=${categoryID}`:''
-        const search = serchValue ? `&search=${serchValue}`:''
+        const search = serchValue
 
         dispatch(fetchPizzas({sortBy, order, category, search, currentPage}))
-
         window.scrollTo(0,0)
     }
-
 
     React.useEffect(()=>{
         /* Якщо він є то тоді ми будемо це парсити */
@@ -69,7 +63,6 @@ function Home () {
         getPizzas()
     },[categoryID, sort.sortProperty, serchValue, currentPage])
 
-
     // вшивання параметрів в адресну стрічку
     React.useEffect(()=>{
         const queryString = qs.stringify({
@@ -80,10 +73,8 @@ function Home () {
         navigate(`?${queryString}`)
     },[categoryID, sort.sortProperty, currentPage])
 
-
-    const pizzas = items.map((obj)=>(<PizzaBlock key={obj.id} {...obj}/>))
+    const pizzas = items.map((obj)=><Link to={`/pizza/${obj.id}`} key={obj.id}><PizzaBlock  {...obj}/></Link>)
     const skeletons = [...new Array(8)].map((_, index)=><Skeleton key={index}/>)
-
 
     return (
         <div className="container">
@@ -98,13 +89,12 @@ function Home () {
                         <h2>Сталась помилка <icon>😕</icon></h2>
                         <p>Не вдалось отримати піцци. Попробуйте повторити спробу пізніше</p>
                     </div>
-                ):(<div className="content__items">{status == 'loading'?skeletons:pizzas}</div>)
+                    ):(
+                    <div className="content__items">{status == 'loading'?skeletons:pizzas}</div>)
             }
-            
             <Pagination onChangePage={(number)=>setCurrentPage(number)} />
         </div>
     )
 }
-
 
 export default Home

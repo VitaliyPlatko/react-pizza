@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { setSort } from '../redux/slices/filterSlice'
+import { selectSort, setSort } from '../redux/slices/filterSlice'
 
 const List = [
     {name: 'популярні', sortProperty: 'rating'},
@@ -16,7 +16,7 @@ function Sort(){
     /* Перелає дії в Redux */
     const dispatch = useDispatch()
     /* Зміння буде зберігати з Redux обєкт sort*/
-    const sort = useSelector(state => state.filter.sort)
+    const sort = useSelector(selectSort)
     /* Отримую ссилку на sort */
     const sortRef = React.useRef()
     /* Для відораження PopUp */
