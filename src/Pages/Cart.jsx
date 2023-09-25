@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
 import CartItem from "../components/CartItem";
 import { clearItems } from "../redux/slices/cartSlice";
@@ -44,13 +43,10 @@ function Cart() {
           <span onClick={onClickClear}>Очистити корзину</span>
         </div>
       </div>
-      
       {items.map((item)=>(
           <CartItem key={item.id} {...item}/>
         ))
       }
-
-      
       <div className="cart__bottom">
         <div className="cart__bottom-details">
           <span> Всього піц: <b>{totalCount} шт.</b> </span>

@@ -9,7 +9,6 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 
 import { Pagination } from '../components/Pagination';
 
-
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFilter, setCategotyId } from '../redux/slices/filterSlice';
 import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice'
@@ -57,7 +56,6 @@ function Home () {
             isSearch.current = true
         }
     },[])
-
 
     React.useEffect(()=>{
         getPizzas()
