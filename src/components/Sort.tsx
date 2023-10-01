@@ -2,8 +2,18 @@ import React from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { selectSort, setSort } from '../redux/slices/filterSlice'
+import { type } from 'os';
 
-const List = [
+type SortItem = {
+    name: string;
+    sortProperty: string;
+}
+
+type PopupClick = MouseEvent & {
+    path: Node[]
+}
+
+const List:SortItem [] = [
     {name: 'популярні', sortProperty: 'rating'},
     {name: 'не популярні', sortProperty: '-rating'},
     {name: 'найдорожчі', sortProperty: 'price'},
@@ -18,20 +28,21 @@ function Sort(){
     /* Зміння буде зберігати з Redux обєкт sort*/
     const sort = useSelector(selectSort)
     /* Отримую ссилку на sort */
-    const sortRef = React.useRef()
+    const sortRef = React.useRef<HTMLDivElement>(null)
     /* Для відораження PopUp */
     const [open, setOpen]=React.useState(false)
     /* Функція вибирає тип сортування і після цього закриває його */
-    const onClickListItem=(obj)=>{
+    const onClickListItem=(obj: SortItem)=>{
         dispatch(setSort(obj))
         setOpen(false)
     }
     
     React.useEffect(() => {
         /* Функція буде викликатись при кліку на body */
-        const handleClickOutside = (event) => {
+        const handleClickOutside = (event: MouseEvent) => {
+            const _event = event as PopupClick
             /* Тепер нам потрібно перееіряти на що ми натиснули */
-            if (!event.composedPath().includes(sortRef.current)) setOpen(false)
+            if (sortRef.current && !_event.path?.includes(sortRef.current)) setOpen(false)
         }
         /* При клаку будее викликатись вункція handleClickOutside */
         document.body.addEventListener('click', handleClickOutside)

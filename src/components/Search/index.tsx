@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { DetailedHTMLProps } from 'react'
 import styles from './Search.module.scss'
 import debounce from 'lodash.debounce'
 import { useDispatch } from 'react-redux';
@@ -9,18 +9,18 @@ const Search = () => {
     const dispatch = useDispatch()
     /* В цей стейт я отримую інформацію з value яке є в input. Він очищує тільки текст в інпуті*/
     const [value, setValue] = React.useState('')
-    const inputRef = React.useRef()
+    const inputRef = React.useRef<HTMLInputElement>(null)
     
     // Очищує інпут і робить фокус
     const onClickClear=()=>{
         dispatch(setSearchValue(''))
         setValue('')
-        inputRef.current.focus()
+        inputRef.current?.focus()
     }
 
     /* debounce викликає функцію setSearchValue через 1 секунду, а useCallback викликає цю вункцію тільки при першому рендерингу*/
     const updateSearchValue=React.useCallback(
-            debounce((str)=>{
+            debounce((str: string)=>{
                 /* оновлює str  */
                 dispatch(setSearchValue(str))
             },250),
@@ -28,7 +28,7 @@ const Search = () => {
     )
 
     /* Функція відповідає за оновлення локального і глобального стейту*/
-    const onChangeInput=(event)=>{
+    const onChangeInput=(event: React.ChangeEvent<HTMLInputElement>)=>{
         dispatch(setSearchValue(''))
         setValue(event.target.value)
         updateSearchValue(event.target.value)

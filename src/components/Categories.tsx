@@ -1,9 +1,18 @@
 import React from 'react'
 
+
+type CategoriesProps = {
+    /* просто значення */
+    value: number;
+    /*  */
+    onChangeCategory: (i: number)=>void;
+}
+
+//Цей масив потрібно перетворити в масив елементів li
+const categories = ['Всі','Мясні','Вегетеріанські','Гриль','Гострі','Закриті']
+
 //1 в нас є div i ul. Наше завдання зроити так щоб задавався клас active на відповідну категорію
-function Categories ({value, onChangeCategory}) {    
-    //Цей масив потрібно перетворити в масив елементів li
-    const categories = ['Всі','Мясні','Вегетеріанські','Гриль','Гострі','Закриті']
+const Categories: React.FC<CategoriesProps> = ({value, onChangeCategory}) => {    
 
     return (
         <div className="categories">

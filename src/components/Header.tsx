@@ -1,23 +1,26 @@
 import LogoSvg from '../assets/img/pizza-logo.svg'
 import Search from './Search'
-//! 1
+
+import React from 'react'
+
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectCart } from '../redux/slices/cartSlice'
 
+
 function Header(){
     /* Повертаю сюди весь cart */
     const {items, totalPrice}= useSelector(selectCart)
-    //! 2
+    
     const location = useLocation()
-    const totalCount = items.reduce((sum,item) => sum + item.count,0)
+    const totalCount = items.reduce((sum: number, item: any) => sum + item.count, 0)
 
     return(
     <div className="header">
         <div className="container">
             <Link to='/'>
                 <div className="header__logo">
-                <img width="38" src={LogoSvg} alt="Pizza logo" />
+                <img width="38" src={LogoSvg as any} alt="Pizza logo" />
                 <div>
                     <h1>React Pizza</h1>
                     <p>найсмачніша піца у світі</p>
