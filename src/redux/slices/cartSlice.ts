@@ -1,7 +1,24 @@
 /* Витягую функцію для створення слайсу */
 import { createSlice } from "@reduxjs/toolkit"
+import { Rootstate } from "../store";
+import { PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+export type CartItem = {
+  id: string;
+  title: string;
+  price: number;
+  imageUrl: string;
+  types: string;
+  sizes: number;
+  count: number;
+}
+
+interface CartSliceState {
+  totalPrice: number;
+  items: CartItem[];
+}
+
+const initialState: CartSliceState = {
   totalPrice: 0,
   items: []
 }
@@ -10,7 +27,7 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addItem(state, action) {
+    addItem(state, action: PayloadAction<CartItem>) {
       // Ми знаходимо цей обєкт у якого obj.id === action.payload.id 
       const findItem = state.items.find(obj => obj.id === action.payload.id)
       // Тоді ми цьому обєкту роимо count++ 
@@ -28,12 +45,12 @@ const cartSlice = createSlice({
         return obj.price * obj.count + sum;
       },0)
     }, 
-    minusItem(state, action){
+    minusItem(state, action: PayloadAction<string>){
       const findItem = state.items.find(obj => obj.id === action.payload)
       if(findItem)findItem.count--
     },
     /* (Видалення) Знаходжу обєкт в якгого id не співпадає з action.payload */
-    removeItem(state, action) {
+    removeItem(state, action: PayloadAction<string>) {
       state.items = state.items.filter(obj => obj.id !== action.payload)
     },
     /* Для очищення корзини */
@@ -44,8 +61,8 @@ const cartSlice = createSlice({
   }
 })
 
-export const selectCart = (state) => state.cart
-export const selectCartItemById = (id) => (state)=>state.cart.items.find((obj) => obj.id == id)
+export const selectCart = (state: Rootstate) => state.cart
+export const selectCartItemById = (id: string) => (state: Rootstate)=>state.cart.items.find((obj) => obj.id == id)
 /* Всі методи які будуть в reducers вонпи будуть в actions */
 export const { addItem, removeItem, clearItems, minusItem } = cartSlice.actions
 export default cartSlice.reducer;

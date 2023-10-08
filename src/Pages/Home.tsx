@@ -9,18 +9,20 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 
 import { Pagination } from '../components/Pagination';
 
-import { useDispatch, useSelector } from 'react-redux';
-import { selectFilter, setCategotyId } from '../redux/slices/filterSlice';
-import { fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice'
+import { useSelector } from 'react-redux';
+import { selectFilter, setCategotyId, setFilters } from '../redux/slices/filterSlice';
+import { SearchPizzaParams, fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice'
 import { Link, useNavigate } from 'react-router-dom';
-import { List } from 'react-content-loader';
+import { useAppDispatch } from '../redux/store';
+import { List } from '../components/Sort';
+
 
 const Home: React.FC = () => {
     /* Це функція яка буде міняти наш стейт */
-    const dispatch = useDispatch()
     const navigate = useNavigate()
+    const dispatch = useAppDispatch()
     const isSearch = React.useRef(false)
-    const { categoryID, sort, setFilters, serchValue } = useSelector(selectFilter)
+    const { categoryID, sort, serchValue } = useSelector(selectFilter)
     const { items, status } = useSelector(selectPizzaData)
 
     /* Функція буде вибирати id котегорії і передає її в Redux через useDispatch */
@@ -35,29 +37,38 @@ const Home: React.FC = () => {
         const search = serchValue
 
         dispatch(
-            //@ts-ignore
-            fetchPizzas({ sortBy, order, category, search, currentPage })
+            fetchPizzas({
+                sortBy,
+                order,
+                category,
+                search,
+                currentPage: String(currentPage)
+            })
         )
         window.scrollTo(0, 0)
     }
 
+    //! ------------------------------------------------------------------------------------------------------------
     React.useEffect(() => {
         /* Якщо він є то тоді ми будемо це парсити */
-        if (window.Location.search) {
-            /* substrin забирає ? з ссилки (арсить і перетворює в обєкт) */
-            const params = qs.parse(window.Location.search.substring(1))
-            /* Пробігаємось по кожній ластиості sortProperty і в обєкті sortProperty знайти то що є в params.sortProperty */
-            const sort = List.find(obj => obj.sortProperty === params.sortProperty)
+        if (!window.location.search) {
+            /* substrin забирає ? з ссилки (арсить і перетворює в об'єкт) */
+            const params = qs.parse(window.location.search.substring(1)) as unknown as SearchPizzaParams;
+            /* Пробігаємось по кожній ластиості sortProperty і в об'єкті sortProperty знайти то що є в params.sortProperty */
+            const sort = List.find((obj) => obj.sortProperty === params.sortBy);
             dispatch(
                 setFilters({
-                    /* Передаю параметри в Redux */
-                    ...params,
-                    sort
+                    serchValue: params.search,
+                    categoryID: Number(params.category),
+                    currentPage: Number(params.currentPage),
+                    /* Якщо прийде undefined тоді передавай перший елемент в списку List а якщо прийде тоді sort */
+                    sort: sort || List[0],
                 })
-            )
-            isSearch.current = true
+            );
+            isSearch.current = true;
         }
-    }, [])
+    }, []);
+    //! ------------------------------------------------------------------------------------------------------------
 
     React.useEffect(() => {
         getPizzas()

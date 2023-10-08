@@ -1,10 +1,18 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addItem, selectCartItemById } from "../../redux/slices/cartSlice"
+import { CartItem } from "../../redux/slices/cartSlice"
 
 const typeNames = ['тонка','традиційна']
 
-type PizzaBlockProps={id:string, title:string, price: number, imageUrl:string, sizes: number[], types:number[]}
+type PizzaBlockProps={
+    id:string, 
+    title:string, 
+    price: number, 
+    imageUrl:string, 
+    sizes: number[], 
+    types:number[],
+}
 
 const PizzaBlock: React.FC<PizzaBlockProps> =({id, title, price, imageUrl, sizes, types})=>{
     
@@ -18,13 +26,14 @@ const PizzaBlock: React.FC<PizzaBlockProps> =({id, title, price, imageUrl, sizes
 
     const onClickAdd=()=>{
         /* Такий обєкт в мене буде зберігатись в Redux */
-        const item={
+        const item: CartItem ={
             id,
             title,
             price,
             imageUrl,
-            type: typeNames[activeType],
-            size: sizes[activeSize]
+            types: typeNames[activeType],
+            sizes: sizes[activeSize],
+            count: 0
         }
         dispatch(addItem(item))
     }
