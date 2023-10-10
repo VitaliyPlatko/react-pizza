@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import { Rootstate } from "../store";
 import { PayloadAction } from "@reduxjs/toolkit";
 
-export type CartItem = {
+export type CartItems = {
   id: string;
   title: string;
   price: number;
@@ -15,7 +15,7 @@ export type CartItem = {
 
 interface CartSliceState {
   totalPrice: number;
-  items: CartItem[];
+  items: CartItems[];
 }
 
 const initialState: CartSliceState = {
@@ -27,7 +27,7 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addItem(state, action: PayloadAction<CartItem>) {
+    addItem(state, action: PayloadAction<CartItems>) {
       // Ми знаходимо цей обєкт у якого obj.id === action.payload.id 
       const findItem = state.items.find(obj => obj.id === action.payload.id)
       // Тоді ми цьому обєкту роимо count++ 

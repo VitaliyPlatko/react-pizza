@@ -20,7 +20,7 @@ export enum Status {
 
 interface PizzaSliceState {
   items: Pizza[];
-  status: Status
+  status: Status;
 }
 
 const initialState: PizzaSliceState = {

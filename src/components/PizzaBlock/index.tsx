@@ -1,7 +1,7 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { addItem, selectCartItemById } from "../../redux/slices/cartSlice"
-import { CartItem } from "../../redux/slices/cartSlice"
+import { CartItems } from "../../redux/slices/cartSlice"
 
 const typeNames = ['тонка','традиційна']
 
@@ -26,7 +26,7 @@ const PizzaBlock: React.FC<PizzaBlockProps> =({id, title, price, imageUrl, sizes
 
     const onClickAdd=()=>{
         /* Такий обєкт в мене буде зберігатись в Redux */
-        const item: CartItem ={
+        const item: CartItems ={
             id,
             title,
             price,

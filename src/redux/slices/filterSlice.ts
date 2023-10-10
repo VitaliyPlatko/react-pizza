@@ -18,7 +18,7 @@ export type Sort = {
 }
 
 export interface FilterSliceState {
-  serchValue: string;
+  serchValue: String;
   categoryID: number;
   sort: Sort;
   currentPage: number,
@@ -31,8 +31,8 @@ const initialState: FilterSliceState = {
   /* Тип сортування */
   currentPage: 1,
   sort: {
-    name: 'популярності',
-    sortProperty: SortPropertyEnum.PRICE_DESK
+    name: 'популярні',
+    sortProperty: SortPropertyEnum.RATING_DESC
   }
 }
 

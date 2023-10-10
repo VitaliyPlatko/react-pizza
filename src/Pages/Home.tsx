@@ -29,13 +29,11 @@ const Home: React.FC = () => {
     const onChangeCategory = (idx: number) => dispatch(setCategotyId(idx))
     const [currentPage, setCurrentPage] = React.useState(1)
 
-    /* Функція ідпоідає за ввзаємодію з бекендом */
     const getPizzas = async () => {
         const sortBy = sort.sortProperty.replace('-', '')
         const order = sort.sortProperty.includes('-') ? 'asc' : 'desc'
         const category = categoryID > 0 ? `&category=${categoryID}` : ''
         const search = serchValue
-
         dispatch(
             fetchPizzas({
                 sortBy,
@@ -48,7 +46,6 @@ const Home: React.FC = () => {
         window.scrollTo(0, 0)
     }
 
-    //! ------------------------------------------------------------------------------------------------------------
     React.useEffect(() => {
         /* Якщо він є то тоді ми будемо це парсити */
         if (!window.location.search) {
@@ -68,7 +65,6 @@ const Home: React.FC = () => {
             isSearch.current = true;
         }
     }, []);
-    //! ------------------------------------------------------------------------------------------------------------
 
     React.useEffect(() => {
         getPizzas()

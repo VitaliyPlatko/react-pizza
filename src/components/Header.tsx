@@ -1,8 +1,6 @@
 import LogoSvg from '../assets/img/pizza-logo.svg'
 import Search from './Search'
 
-import React from 'react'
-
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectCart } from '../redux/slices/cartSlice'
