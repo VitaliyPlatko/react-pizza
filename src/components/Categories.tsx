@@ -1,6 +1,5 @@
 import React from 'react'
 
-
 type CategoriesProps = {
     /* просто значення */
     value: number;
@@ -12,8 +11,7 @@ type CategoriesProps = {
 const categories = ['Всі','Мясні','Вегетеріанські','Гриль','Гострі','Закриті']
 
 //1 в нас є div i ul. Наше завдання зроити так щоб задавався клас active на відповідну категорію
-const Categories: React.FC<CategoriesProps> = ({value, onChangeCategory}) => {    
-
+const Categories: React.FC<CategoriesProps> = React.memo(({value, onChangeCategory}) => {
     return (
         <div className="categories">
             <ul>
@@ -32,5 +30,5 @@ const Categories: React.FC<CategoriesProps> = ({value, onChangeCategory}) => {
         </div>
     )
 }
-
+)
 export default Categories

@@ -1,28 +1,7 @@
 /* Витягую функцію для створення слайсу */
 import { createSlice } from "@reduxjs/toolkit"
-import { Rootstate } from "../store";
 import { PayloadAction } from "@reduxjs/toolkit";
-
-export enum SortPropertyEnum {
-  RATING_DESC = 'rating',
-  RATING_ASC = '-rating',
-  TITLE_DESC = 'title',
-  TITLE_ASC = '-title',
-  PRICE_DESK = 'price',
-  PRICE_ASK = '-price',
-}
-
-export type Sort = {
-  name: string;
-  sortProperty: SortPropertyEnum;
-}
-
-export interface FilterSliceState {
-  serchValue: String;
-  categoryID: number;
-  sort: Sort;
-  currentPage: number,
-}
+import { FilterSliceState, Sort, SortPropertyEnum } from "./types";
 
 const initialState: FilterSliceState = {
   serchValue: '',
@@ -59,8 +38,6 @@ const filterSlice = createSlice({
   }
 })
 
-export const selectSort = (state: Rootstate) => state.filter.sort
-export const selectFilter = (state: Rootstate) => state.filter
 /* Всі методи які будуть в reducers вонпи будуть в actions */
 export const { setCategotyId, setSort, setFilters, setSearchValue } = filterSlice.actions
 export default filterSlice.reducer;

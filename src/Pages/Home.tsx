@@ -10,12 +10,16 @@ import Skeleton from "../components/PizzaBlock/Skeleton";
 import { Pagination } from '../components/Pagination';
 
 import { useSelector } from 'react-redux';
-import { selectFilter, setCategotyId, setFilters } from '../redux/slices/filterSlice';
-import { SearchPizzaParams, fetchPizzas, selectPizzaData } from '../redux/slices/pizzaSlice'
+import { setCategotyId, setFilters } from '../redux/filter/slice';
+import { fetchPizzas } from '../redux/pizza/asyncActions';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../redux/store';
 import { List } from '../components/Sort';
 
+import { selectPizzaData } from '../redux/pizza/selectors';
+import { SearchPizzaParams } from '../redux/pizza/types';
+
+import { selectFilter } from '../redux/filter/selectors';
 
 const Home: React.FC = () => {
     /* Це функція яка буде міняти наш стейт */
@@ -26,7 +30,7 @@ const Home: React.FC = () => {
     const { items, status } = useSelector(selectPizzaData)
 
     /* Функція буде вибирати id котегорії і передає її в Redux через useDispatch */
-    const onChangeCategory = (idx: number) => dispatch(setCategotyId(idx))
+    const onChangeCategory = React.useCallback((idx: number) => dispatch(setCategotyId(idx)), [])
     const [currentPage, setCurrentPage] = React.useState(1)
 
     const getPizzas = async () => {
@@ -87,7 +91,7 @@ const Home: React.FC = () => {
         <div className="container">
             <div className="content__top">
                 <Categories value={categoryID} onChangeCategory={onChangeCategory} />
-                <Sort />
+                <Sort value={sort} />
             </div>
             <h2 className="content__title">Всі піцци</h2>
             {

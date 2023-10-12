@@ -1,7 +1,7 @@
 import React from 'react'
-
-import { useDispatch, useSelector } from 'react-redux'
-import { SortPropertyEnum, selectSort, setSort } from '../redux/slices/filterSlice'
+import { useDispatch } from 'react-redux'
+import { Sort, SortPropertyEnum } from '../redux/filter/types'
+import { setSort } from '../redux/filter/slice'
 
 type SortItem = {
     name: string;
@@ -10,6 +10,10 @@ type SortItem = {
 
 type PopupClick = MouseEvent & {
     path: Node[]
+}
+
+type SortPopupProps = {
+    value: Sort
 }
 
 export const List: SortItem [] = [
@@ -21,11 +25,9 @@ export const List: SortItem [] = [
     {name: 'від Я до А', sortProperty: SortPropertyEnum.TITLE_ASC}
 ]
 
-function SortPopup(){
+const SortPopup: React.FC<SortPopupProps> = React.memo(({value}) => {
     /* Перелає дії в Redux */
     const dispatch = useDispatch()
-    /* Зміння буде зберігати з Redux обєкт sort*/
-    const sort = useSelector(selectSort)
     /* Отримую ссилку на sort */
     const sortRef = React.useRef<HTMLDivElement>(null)
     /* Для відораження PopUp */
@@ -37,19 +39,23 @@ function SortPopup(){
     }
     
     React.useEffect(() => {
-        /* Функція буде викликатись при кліку на body */
         const handleClickOutside = (event: MouseEvent) => {
-            const _event = event as PopupClick
-            /* Перевіряємо, чи існує _event.path і чи не є він пустим масивом перед викликом методу includes */
-            if (_event.path && _event.path.length > 0 && sortRef.current && !_event.path.includes(sortRef.current)) {
-                setOpen(false)
+            if (sortRef.current) {
+                let target = event.target as Node | null;
+                while (target) {
+                    if (target === sortRef.current) {
+                        return; // Клік відбувся всередині sortRef, нічого не робимо
+                    }
+                    target = target.parentNode;
+                }
+                setOpen(false); // Клік відбувся поза sortRef
             }
         }
-        /* При кліку буде викликатись функція handleClickOutside */
-        document.body.addEventListener('click', handleClickOutside)
-        /* Якщо компонент має зникнути зі сторінки, то ми повинні видалити обробник подій */
-        return () => document.body.removeEventListener('click', handleClickOutside)
-    }, [])
+    
+        document.body.addEventListener('click', handleClickOutside);
+    
+        return () => document.body.removeEventListener('click', handleClickOutside);
+    }, []);
 
     return(
         <div ref={sortRef} className="sort">
@@ -67,7 +73,7 @@ function SortPopup(){
             />
             </svg>
             <b onClick={()=>setOpen(!open)}>Сортування по:</b>
-            <span onClick={()=>setOpen(!open)}>{sort.name}</span>
+            <span onClick={()=>setOpen(!open)}>{value.name}</span>
             </div>
             {open && 
                 <div className="sort__popup">
@@ -77,7 +83,7 @@ function SortPopup(){
                             <li 
                                 key={i} 
                                 onClick={()=>onClickListItem(obj)} 
-                                className={sort.sortProperty === obj.sortProperty ? 'active':''}>
+                                className={value.sortProperty === obj.sortProperty ? 'active':''}>
                                 {obj.name}
                             </li>
                         ))}
@@ -85,7 +91,6 @@ function SortPopup(){
                 </div>
             }
         </div>
-    )
-}
-
+    )}
+)
 export default SortPopup
