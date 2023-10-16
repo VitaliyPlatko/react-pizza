@@ -1,6 +1,6 @@
 import ContentLoader from "react-content-loader"
 
-const MyLoader = () => (
+export const Skeleton = () => (
     <ContentLoader 
         className="pizza-block"
         speed={2}
@@ -18,5 +18,3 @@ const MyLoader = () => (
         <circle cx="152" cy="164" r="7" />
     </ContentLoader>
 )
-
-export default MyLoader

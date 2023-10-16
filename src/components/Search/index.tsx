@@ -4,8 +4,7 @@ import debounce from 'lodash.debounce'
 import { useDispatch } from 'react-redux';
 import { setSearchValue } from '../../redux/filter/slice';
 
-
-const Search = () => {
+export const Search = () => {
     const dispatch = useDispatch()
     /* В цей стейт я отримую інформацію з value яке є в input. Він очищує тільки текст в інпуті*/
     const [value, setValue] = React.useState('')
@@ -49,5 +48,3 @@ const Search = () => {
         </div>
     )
 }
-
-export default Search

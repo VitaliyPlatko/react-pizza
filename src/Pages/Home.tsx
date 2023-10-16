@@ -2,19 +2,14 @@ import React from 'react'
 
 import qs from 'qs'
 
-import Categories from '../components/Categories';
-import PizzaBlock from "../components/PizzaBlock";
-import Sort from "../components/Sort";
-import Skeleton from "../components/PizzaBlock/Skeleton";
-
-import { Pagination } from '../components/Pagination';
+import { List } from '../components/Sort';
+import { Skeleton, PizzaBlock, Categories, Pagination, Sort } from '../components/index'
 
 import { useSelector } from 'react-redux';
 import { setCategotyId, setFilters } from '../redux/filter/slice';
 import { fetchPizzas } from '../redux/pizza/asyncActions';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../redux/store';
-import { List } from '../components/Sort';
 
 import { selectPizzaData } from '../redux/pizza/selectors';
 import { SearchPizzaParams } from '../redux/pizza/types';
@@ -84,7 +79,7 @@ const Home: React.FC = () => {
         navigate(`?${queryString}`)
     }, [categoryID, sort.sortProperty, currentPage])
 
-    const pizzas = items.map((obj: any) => <Link to={`/pizza/${obj.id}`} key={obj.id}><PizzaBlock  {...obj} /></Link>)
+    const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />)
     const skeletons = [...new Array(8)].map((_, index) => <Skeleton key={index} />)
 
     return (
